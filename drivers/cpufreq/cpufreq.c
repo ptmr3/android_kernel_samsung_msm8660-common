@@ -33,6 +33,9 @@
 #include <trace/events/power.h>
 #include <linux/semaphore.h>
 
+// Safe boot speed
+#define SafeBootSpeed 1512000
+
 /**
  * The "cpufreq driver" - the arch- or hardware-dependent low
  * level driver of CPUFreq support, and its spinlock. This lock
@@ -1028,6 +1031,12 @@ static int cpufreq_add_dev(struct sys_device *sys_dev)
 		pr_debug("initialization failed\n");
 		goto err_unlock_policy;
 	}
+
+	// Set max speed at boot to 1.512Ghz since is the safest speed to boot
+     if (policy->max > SafeBootSpeed){
+        policy->max = SafeBootSpeed;
+	}
+
 	policy->user_policy.min = policy->min;
 	policy->user_policy.max = policy->max;
 
